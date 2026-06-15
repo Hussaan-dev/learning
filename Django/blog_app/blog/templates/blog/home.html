@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1>My Blog</h1>
+        <hr>
+        <a href="{% url 'create_post' %}">
+            <button>Create Post</button>
+        </a>
+        <hr>
+        {% for post in posts %}
+            <a href="{% url 'post_details' post.id %}">{{ post.title }}</a>
+            <p>{{ post.content }}</p>
+            <hr>
+        {% endfor %}
+    </body>
+</html>
