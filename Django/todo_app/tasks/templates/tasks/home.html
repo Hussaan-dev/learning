@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+<style>
+    body {
+        font-family: Arial;
+        margin: 20px;
+        background: #f9f9f9;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    h2 {
+        background: white;
+        padding: 10px;
+        border: 1px solid #ddd;
+        margin-bottom: 5px;
+    }
+
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
+    button {
+        padding: 6px 10px;
+        margin: 5px 0;
+        cursor: pointer;
+    }
+
+    hr {
+        margin: 15px 0;
+    }
+</style>
+    </head>
+    <body>
+        <h1>Tasks</h1>
+        <hr>
+        <a href="{% url 'create' %}">
+            <button>Create Task</button>
+        </a>
+        <hr>
+        {% for task in tasks %}
+            <a href="{% url 'edit' task.id %}">
+            <h2>{{ task.title }}</h2>
+            </a>
+                {% if task.done %} done
+                {% else %} Not done
+                {% endif %}
+            <br><br>
+            <a href="{% url 'delete' task.id %}">
+                <button>Delete</button>
+            </a>
+            {% endfor %}
+    </body>
+</html>
