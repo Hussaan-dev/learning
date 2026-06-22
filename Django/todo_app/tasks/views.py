@@ -1,28 +1,45 @@
-from django.shortcuts import render,redirect,get_object_or_404
+
+from django.db.models.query import QuerySet
+from django.forms.models import BaseModelForm
+from django.http import HttpResponse
+
 from .models import Task
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
 
-# Create your views here.
-class TaskListView(ListView):
+class SignupView(CreateView):
+    form_class=UserCreationForm
+    template_name= 'registration/signup.html'
+    success_url=reverse_lazy('login')
+
+class TaskListView(LoginRequiredMixin,ListView):
     model= Task
     template_name='tasks/home.html'
     context_object_name= 'tasks'
 
-class TaskCreateView(CreateView):
+    def get_queryset(self):
+        return Task.objects.filter(user=self.request.user)
+
+class TaskCreateView(LoginRequiredMixin,CreateView):
     model= Task
     fields= ['title','done']
     template_name='tasks/create_task.html'
     success_url= reverse_lazy('home')
 
-class TaskUpdateView(UpdateView):
+    def form_valid(self, form):
+        form.instance.user=self.request.user
+        return super().form_valid(form)
+
+class TaskUpdateView(LoginRequiredMixin,UpdateView):
     model= Task
     fields=['title','done']
     template_name='tasks/edit_task.html'
     context_object_name='task'
     success_url=reverse_lazy('home')
 
-class TaskDeleteView(DeleteView):
+class TaskDeleteView(LoginRequiredMixin,DeleteView):
     model=Task
     template_name='tasks/del_task.html'
     success_url=reverse_lazy('home')
