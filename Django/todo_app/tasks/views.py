@@ -1,13 +1,20 @@
-
-from django.db.models.query import QuerySet
-from django.forms.models import BaseModelForm
-from django.http import HttpResponse
-
 from .models import Task
 from django.views.generic import ListView,CreateView,UpdateView,DeleteView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
+from rest_framework import viewsets
+from .serializers import TaskSerializer
+
+class TaskViewSet(viewsets.ModelViewSet):
+    serializer_class=TaskSerializer
+    queryset=Task.objects.all()
+
+    def perform_create(self,serializer):
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        return Task.objects.filter(user=self.request.user)
 
 class SignupView(CreateView):
     form_class=UserCreationForm
